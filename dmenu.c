@@ -673,6 +673,7 @@ setup(void)
 		y = topbar ? 0 : wa.height - mh;
 		mw = wa.width;
 	}
+	y += top_margin;
 	promptw = (prompt && *prompt) ? TEXTW(prompt) - lrpad / 4 : 0;
 	for (item = items; item && item->text; ++item) {
 		if ((tmp = textw_clamp(item->text, mw/3)) > inputw) {
@@ -686,9 +687,12 @@ setup(void)
 	swa.override_redirect = True;
 	swa.background_pixel = scheme[SchemeNorm][ColBg].pixel;
 	swa.event_mask = ExposureMask | KeyPressMask | VisibilityChangeMask;
-	win = XCreateWindow(dpy, parentwin, x, y, mw, mh, 0,
+	int x_value = (mw - menu_width) / 2;
+	win = XCreateWindow(dpy, parentwin, x + x_value, y - (topbar ? 0 : border_width * 2), menu_width - border_width * 2, mh, border_width,
 	                    CopyFromParent, CopyFromParent, CopyFromParent,
 	                    CWOverrideRedirect | CWBackPixel | CWEventMask, &swa);
+	if (border_width)
+		XSetWindowBorder(dpy, win, scheme[SchemeSel][ColBg].pixel);
 	XSetClassHint(dpy, win, &ch);
 
 
